@@ -67,17 +67,17 @@ _DEFAULT_TEMPLATE_ZH = """
 
 以下是一些sql示例：
     问：品牌最近的拉新效果如何？
-    sql：select add_customer_num, add_friends_num, add_group_customer_num from store_daily_customer_operation_report where store_market_type = 'brand' and date_type = 'DAY' order by biz_start_date desc;
+    sql：select add_customer_num, add_friends_num, add_group_customer_num from `pvt_traffic_ai_statistics`.`daily_customer_operation_report` where store_market_type = 'brand' and date_type = 'DAY' order by biz_start_date desc;
     问：品牌上周的运营效果如何？
-    sql：select reachable_customer_num, reachable_friends_num, group_customer_num, lost_customer_num, lost_friends_num, lost_group_customer_num from store_daily_customer_operation_report where store_market_type = 'brand' and date_type = 'WEEK' and biz_start_date = '上个自然周周一0点' order by biz_start_date desc;
+    sql：select reachable_customer_num, reachable_friends_num, group_customer_num, lost_customer_num, lost_friends_num, lost_group_customer_num from `pvt_traffic_ai_statistics`.`daily_customer_operation_report` where store_market_type = 'brand' and date_type = 'WEEK' and biz_start_date = '上个自然周周一0点' order by biz_start_date desc;
     问：XXX门店最近的拉新效果如何？
-    sql：select add_customer_num, add_friends_num, add_group_customer_num from store_daily_customer_operation_report where store_market_type = 'store' and store_market_name = 'XXX' and date_type = 'DAY' order by biz_start_date desc;
+    sql：select add_customer_num, add_friends_num, add_group_customer_num from `pvt_traffic_ai_statistics`.`daily_customer_operation_report` where store_market_type = 'store' and store_market_name = 'XXX' and date_type = 'DAY' order by biz_start_date desc;
     问：XXX门店最近的运营效果如何？
-    sql：select reachable_customer_num, reachable_friends_num, group_customer_num, lost_customer_num, lost_friends_num, lost_group_customer_num from store_daily_customer_operation_report where store_market_type = 'store' and store_market_name = 'XXX' and date_type = 'DAY' order by biz_start_date desc;
+    sql：select reachable_customer_num, reachable_friends_num, group_customer_num, lost_customer_num, lost_friends_num, lost_group_customer_num from `pvt_traffic_ai_statistics`.`daily_customer_operation_report` where store_market_type = 'store' and store_market_name = 'XXX' and date_type = 'DAY' order by biz_start_date desc;
     问：M区域/市场最近的拉新效果如何？
-    sql：select add_customer_num, add_friends_num, add_group_customer_num from store_daily_customer_operation_report where store_market_type = 'market' and store_market_name = 'M区域/市场' and date_type = 'DAY' order by biz_start_date desc;
+    sql：select add_customer_num, add_friends_num, add_group_customer_num from `pvt_traffic_ai_statistics`.`daily_customer_operation_report` where store_market_type = 'market' and store_market_name = 'M区域/市场' and date_type = 'DAY' order by biz_start_date desc;
     问：M区域/市场最近的运营效果如何？
-    sql：select reachable_customer_num, reachable_friends_num, group_customer_num, lost_customer_num, lost_friends_num, lost_group_customer_num from store_daily_customer_operation_report where store_market_type = 'market' and store_market_name = 'M区域/市场' and date_type = 'DAY' order by biz_start_date desc;
+    sql：select reachable_customer_num, reachable_friends_num, group_customer_num, lost_customer_num, lost_friends_num, lost_group_customer_num from `pvt_traffic_ai_statistics`.`daily_customer_operation_report` where store_market_type = 'market' and store_market_name = 'M区域/市场' and date_type = 'DAY' order by biz_start_date desc;
     注意以上示例中对于store_market_type、store_market_name、date_type、biz_start_date等字段的处理，请以此为参考。
 
 用户问题:
