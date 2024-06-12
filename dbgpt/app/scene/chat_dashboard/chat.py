@@ -54,6 +54,7 @@ class ChatDashboard(BaseChat):
 
     @trace()
     async def generate_input_values(self) -> Dict:
+        global table_infos
         try:
             from dbgpt.rag.summary.db_summary_client import DBSummaryClient
         except ImportError:
@@ -75,9 +76,10 @@ class ChatDashboard(BaseChat):
         input_values = {
             "input": self.current_user_input,
             "dialect": self.database.dialect,
-            "table_info": self.database.table_simple_info(),
-            "supported_chat_type": self.dashboard_template["supported_chart_type"]
-            # "table_info": client.get_similar_tables(dbname=self.db_name, query=self.current_user_input, topk=self.top_k)
+            # "table_info": self.database.table_simple_info(),
+            "supported_chat_type": self.dashboard_template["supported_chart_type"],
+            "db_name": self.db_name,
+            "table_info": table_infos
         }
 
         return input_values

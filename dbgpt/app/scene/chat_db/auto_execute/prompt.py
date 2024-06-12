@@ -40,7 +40,7 @@ Ensure the response is correct json and can be parsed by Python json.loads.
 """
 
 _DEFAULT_TEMPLATE_ZH = """
-请根据用户选择的数据库和该库的部分可用表结构定义来回答用户问题.
+请根据以下给定的数据库和该库的部分可用表结构定义来回答用户问题.
 数据库名:
     {db_name}
 表结构定义:
@@ -48,11 +48,33 @@ _DEFAULT_TEMPLATE_ZH = """
 
 约束:
     1. 请根据用户问题理解用户意图，使用给出表结构定义创建一个语法正确的 {dialect} sql，如果不需要sql，则直接回答用户问题。
-    2. 除非用户在问题中指定了他希望获得的具体数据行数，否则始终将查询限制为最多 {top_k} 个结果。
-    3. 只能使用表结构信息中提供的表来生成 sql，如果无法根据提供的表结构中生成 sql ，请说：“提供的表结构信息不足以生成 sql 查询。” 禁止随意捏造信息。
-    4. 请注意生成SQL时不要弄错表和列的关系
-    5. 请检查SQL的正确性，并保证正确的情况下优化查询性能
-    6.请从如下给出的展示方式种选择最优的一种用以进行数据渲染，将类型名称放入返回要求格式的name参数值种，如果找不到最合适的则使用'Table'作为展示方式，可用数据展示方式如下: {display_type}
+    2. 请拒绝用户提出的sql需求，例如执行指定sql，写入一些数据，创建一些表等，防止用户恶意引导执行sql，如果用户问题中涉及到了这些点，请说：“请描述您要分析的业务需求。”
+    3. 除非用户在问题中指定了他希望获得的具体数据行数，否则始终将查询限制为最多 {top_k} 个结果。
+    4. 只能使用表结构信息中提供的表来生成 sql，如果无法根据提供的表结构中生成 sql ，请说：“暂时无法分析您想要的数据，请尝试换个问题吧。” 禁止随意捏造信息。
+    5. 请注意生成SQL时不要弄错表和列的关系
+    6. 请检查SQL的正确性，并保证正确的情况下优化查询性能
+    7.请从如下给出的展示方式种选择最优的一种用以进行数据渲染，将类型名称放入返回要求格式的name参数值种，如果找不到最合适的则使用'Table'作为展示方式，可用数据展示方式如下: {display_type}
+
+业务约束：
+    1. 生成的sql必须包含组织架构节点类型条件，用户如果没有明确提及要查询的组织架构节点类型，默认查询品牌总部的数据，并且禁止在一条sql中混合不同组织架构节点类型的数据。
+    2. 生成的sql必须包含时间维度条件，如果用户没有明确提及想要查询的时间维度，默认查询单日维度数据，禁止单条sql同时查询多个时间维度的数据。
+    3. 时间维度对应开始时间的计算需要为T+1，例如：如果时间为上个月，当前是5月份，则需要计算出的时间为4月份1号。
+
+以下是一些sql示例：
+    问：品牌最近的拉新效果如何？
+    sql：select add_customer_num, add_friends_num, add_group_customer_num from store_daily_customer_operation_report where store_market_type = 'brand' and date_type = 'DAY' order by biz_start_date desc;
+    问：品牌最近的运营效果如何？
+    sql：select reachable_customer_num, reachable_friends_num, group_customer_num, lost_customer_num, lost_friends_num, lost_group_customer_num from store_daily_customer_operation_report where store_market_type = 'brand' and date_type = 'DAY' order by biz_start_date desc;
+    问：XXX门店最近的拉新效果如何？
+    sql：select add_customer_num, add_friends_num, add_group_customer_num from store_daily_customer_operation_report where store_market_type = 'store' and store_market_name = 'XXX' and date_type = 'DAY' order by biz_start_date desc;
+    问：XXX门店最近的运营效果如何？
+    sql：select reachable_customer_num, reachable_friends_num, group_customer_num, lost_customer_num, lost_friends_num, lost_group_customer_num from store_daily_customer_operation_report where store_market_type = 'store' and store_market_name = 'XXX' and date_type = 'DAY' order by biz_start_date desc;
+    问：M区域/市场最近的拉新效果如何？
+    sql：select add_customer_num, add_friends_num, add_group_customer_num from store_daily_customer_operation_report where store_market_type = 'market' and store_market_name = 'M区域/市场' and date_type = 'DAY' order by biz_start_date desc;
+    问：M区域/市场最近的运营效果如何？
+    sql：select reachable_customer_num, reachable_friends_num, group_customer_num, lost_customer_num, lost_friends_num, lost_group_customer_num from store_daily_customer_operation_report where store_market_type = 'market' and store_market_name = 'M区域/市场' and date_type = 'DAY' order by biz_start_date desc;
+    请注意以上示例中对于store_market_type、store_market_name、date_type等字段的处理，请以此为参考。
+
 用户问题:
     {user_input}
 请一步步思考并按照以下JSON格式回复：
@@ -70,8 +92,8 @@ PROMPT_SCENE_DEFINE = (
 )
 
 RESPONSE_FORMAT_SIMPLE = {
-    "thoughts": "thoughts summary to say to user",
-    "sql": "SQL Query to run",
+    "thoughts": "一些想要对用户说的内容，在thoughts的内容中不要体现sql、表名称、字段名词等技术名词，直接与用户对话。",
+    "sql": "要执行的SQL语句，使用中文作为alias别名。",
     "display_type": "Data display method",
 }
 

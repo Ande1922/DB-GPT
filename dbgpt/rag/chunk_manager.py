@@ -103,7 +103,7 @@ class ChunkParameters(BaseModel):
     )
 
     chunk_size: int = Field(
-        default=512,
+        default=2048,
         description="chunk size",
     )
     chunk_overlap: int = Field(
